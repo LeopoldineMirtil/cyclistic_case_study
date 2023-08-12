@@ -1,0 +1,1158 @@
+knitr::opts_chunk$set(echo = TRUE)
+#load library packages
+library(dplyr)
+library(ggplot2)
+library(knitr)
+library(lubridate)
+library(tidyr)
+library(tidyverse)
+# set directory 
+setwd("C:/Users/Leopoldine/Desktop/Mine/Coding Projects & Portfolio/Cyclistic Case Study/Cyclistic2022/00_raw_data")
+# import datasets
+m1_2022 <- read.csv("202201-divvy-tripdata.csv")
+m2_2022 <- read.csv("202202-divvy-tripdata.csv")
+m3_2022 <- read.csv("202203-divvy-tripdata.csv")
+m4_2022 <- read.csv("202204-divvy-tripdata.csv")
+m5_2022 <- read.csv("202205-divvy-tripdata.csv")
+m6_2022 <- read.csv("202206-divvy-tripdata.csv")
+m7_2022 <- read.csv("202207-divvy-tripdata.csv")
+m8_2022 <- read.csv("202208-divvy-tripdata.csv")
+m9_2022 <- read.csv("202209-divvy-tripdata.csv")
+m10_2022 <- read.csv("202210-divvy-tripdata.csv")
+m11_2022 <- read.csv("202211-divvy-tripdata.csv")
+m12_2022 <- read.csv("202212-divvy-tripdata.csv")
+# set directory and import data files
+setwd("C:/Users/Leopoldine/Desktop/Mine/Coding Projects & Portfolio/Cyclistic Case Study/Cyclistic2022/00_raw_data")
+m1_2022 <- read.csv("202201-divvy-tripdata.csv")
+m2_2022 <- read.csv("202202-divvy-tripdata.csv")
+m3_2022 <- read.csv("202203-divvy-tripdata.csv")
+m4_2022 <- read.csv("202204-divvy-tripdata.csv")
+m5_2022 <- read.csv("202205-divvy-tripdata.csv")
+m6_2022 <- read.csv("202206-divvy-tripdata.csv")
+m7_2022 <- read.csv("202207-divvy-tripdata.csv")
+m8_2022 <- read.csv("202208-divvy-tripdata.csv")
+m9_2022 <- read.csv("202209-divvy-tripdata.csv")
+m10_2022 <- read.csv("202210-divvy-tripdata.csv")
+m11_2022 <- read.csv("202211-divvy-tripdata.csv")
+m12_2022 <- read.csv("202212-divvy-tripdata.csv")
+# set directory and import data files
+setwd("C:/Users/Leopoldine/Desktop/Mine/Coding Projects & Portfolio/Cyclistic Case Study/Cyclistic2022/00_raw_data")
+m1_2022 <- read.csv("202201-divvy-tripdata.csv")
+m2_2022 <- read.csv("202202-divvy-tripdata.csv")
+m3_2022 <- read.csv("202203-divvy-tripdata.csv")
+m4_2022 <- read.csv("202204-divvy-tripdata.csv")
+m5_2022 <- read.csv("202205-divvy-tripdata.csv")
+m6_2022 <- read.csv("202206-divvy-tripdata.csv")
+m7_2022 <- read.csv("202207-divvy-tripdata.csv")
+m8_2022 <- read.csv("202208-divvy-tripdata.csv")
+m9_2022 <- read.csv("202209-divvy-publictripdata.csv")
+m10_2022 <- read.csv("202210-divvy-tripdata.csv")
+m11_2022 <- read.csv("202211-divvy-tripdata.csv")
+m12_2022 <- read.csv("202212-divvy-tripdata.csv")
+#combine multiple data into one 
+total_trips <- bind_row(m1_2022, m2_2022, m3_2022, m4_2022, m5_2022, m6_2022, m7_2022, m8_2022, m9_2022, m10_2022, m112022, m12_2022)
+#combine multiple data into one
+total_trips <- bind_rows(m1_2022, m2_2022, m3_2022, m4_2022, m5_2022, m6_2022, m7_2022, m8_2022, m9_2022, m10_2022, m112022, m12_2022)
+#combine multiple data into one
+total_trips <- bind_rows(m1_2022, m2_2022, m3_2022, m4_2022, m5_2022, m6_2022, m7_2022, m8_2022, m9_2022, m10_2022, m11_2022, m12_2022)
+gc()
+#inspect new data frame
+str(total_trips)  
+#export file in case of error
+setwd("C:/Users/Leopoldine/Desktop/Mine/Coding Projects & Portfolio/Cyclistic Case Study/Cyclistic2022/01_tidy_data")
+#export copy of new data frame just in case
+write.csv(total_trips, "total_trips.csv", row.names = FALSE)
+gc()
+rm(m1_2022, m2_2022, m3_2022, m4_2022, m5_2022, m6_2022, m7_2022, m8_2022, m9_2022, m10_2022, m11_2022, m12_2022)
+# add new columns
+total_trips$date <- as.Date(total_trips$started_at)  
+str(total_trips$date)
+total_trips$month <- format(as.Date(total_trips$date), "b")  #month of start date
+str(total_trips$month)
+total_trips$month <- format(as.Date(total_trips$date), "%M")  #month of start date
+str(total_trips$month)
+total_trips$month <- format(as.Date(total_trips$date), "%m")  #month of start date
+str(total_trips$month)
+View(total_trips)
+total_trips$day_of_week <- format(as.Date(total_trips$date), "%a")  #full name of the day of week of start date(Sunday, Saturday)
+str(total_trips$day_of_week)
+total_trips$day_of_week <- format(as.Date(total_trips$date), "%A")  #full name of the day of week of start date(Sunday, Saturday)
+str(total_trips$day_of_week)
+View(total_trips)
+gc()
+setwd("C:/Users/Leopoldine/Desktop/Mine/Coding Projects & Portfolio/Cyclistic Case Study/Cyclistic2022/01_tidy_data")
+write.csv(total_trips, "total_trips.csv", row.names = FALSE)
+save.image("C:/Users/Leopoldine/Desktop/Mine/Coding Projects & Portfolio/Cyclistic Case Study/Cyclistic2022/02_r_scripts/Cyclistic22History.Rhistory.RData")
+save.image("~/Cyclistic22 workspace.RData")
+setwd("C:/Users/Leopoldine/Desktop/Mine/Coding Projects & Portfolio/Cyclistic Case Study/Cyclistic2022/03_reports")
+gc()
+# add 'duration' column 
+total_trips <-transform(total_trips, duration=(ended_at-started_at))
+# must research to convert columns character to date/time type
+total_trips$started_at <- as.POSIXct(total_trips$started_at)
+class(total_trips$started_at)
+# change successful, continuing 
+total_trips$ended_at <- as.POSIXct(total_trips$ended_at)
+class(total_trips$ended_at)
+total_trips <- transform(total_trips, duration=ended_at-started_at)
+class(total_trips$duration)
+# install & load 'chron' package to change format
+install.packages("chron")
+library(chron)
+total_trips$duration <- chron(times(total_trips$duration), format = "%H:%M:%S")
+class(total_trips$duration)
+# change format from seconds to hh:mm:ss
+total_trips$duration <- format(total_trips$duration, "%H:%M:%S")
+total_trips$duration <- format(total_trips$duration, FALSE, "%H:%M:%S")
+#NOTE- 'lubridate::as.period' after using difftime function to get results if continue results
+seconds_to_period(86400)
+seconds_to_period(48000)
+seconds_to_period(total_trips$duration)
+total_trips <- format.difftime(total_trips$duration, format = "%H:%M:%S")
+#overwrote table, import and redo
+total_trips <- read.csv("total_trips.csv")
+total_trips$started_at <- as.POSIXct(total_trips$started_at)
+total_trips$ended_at <- as.POSIXct(total_trips$ended_at)
+total_trips <-transform(total_trips, duration=(ended_at-started_at))
+total_trips$duration <- format.difftime(total_trips$duration, format = "%H:%M:%S")
+View(total_trips)
+#incorrect, redo 
+total_trips$duration <- strptime(total_trips$duration, format = "%H:%M:%S")
+total_trips$durationh <- strftime(difftime(total_trips$end_time, total_trips$start_time)), format = "%H:%M:%S")
+total_trips$duration <- strftime(difftime(total_trips$end_time, total_trips$start_time))
+total_trips$duration <- strftime(difftime(total_trips$end_time, total_trips$start_time), tz = "")
+setwd("C:/Users/Leopoldine/Desktop/Mine/Coding Projects & Portfolio/Cyclistic Case Study/Cyclistic2022/03_reports")
+save.image("C:/Users/Leopoldine/Desktop/Mine/Coding Projects & Portfolio/Cyclistic Case Study/Cyclistic2022/02_r_scripts/Cyclistic22History.Rhistory.RData")
+save.image("~/Cyclistic22 workspace.RData")
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(ggplot2)
+library(knitr)
+library(lubridate)
+library(tidyr)
+library(tidyverse)
+total_trips <- read.csv(total_trips)
+# add duration column w/o converting data types of ended_at and started_at
+library(hms)
+#maybe duration in hh:mm:ss
+total_trips$duration <- as_hms(difftime(total_trips$ended_at,total_trips$started_at))   
+class(duration)
+class(total_trips$duration)
+# change data type for calc
+total_trips$duration <- as.numeric(as.character(total_trips$duration))
+# redo 
+total_trips <- read.csv(total_trips)
+#giving up hh:mm:ss 
+total_trips$duration <- difftime(total_trips$ended_at,total_trips$started_at)  
+View(total_trips)
+class(total_trips$duration)
+# inspect data
+str(total_trips) 
+# make new dataset and export file
+setwd("C:/Users/Leopoldine/Desktop/Mine/Coding Projects & Portfolio/Cyclistic Case Study/Cyclistic2022/01_tidy_data")
+total_tripsv2 <- total_trips
+write.csv(total_tripsv2, "total_tripsv2.csv", row.names = FALSE)
+rm(total_trips)
+gc()
+#remove seconds for calculations
+total_tripsv2$duration <- as.numeric(total_tripsv2$duration)
+# confirm data type change
+str(total_tripsv2$duration)
+#remove neg vals from 'duration'
+total_tripsv2 <- total_tripsv2[!(total_tripsv2$duration<0),]
+#remove columns
+total_tripsv2 <- total_tripsv2[, -9:-12] #removing 4 columns: start_lat, start_lng, end_lat, end_lng 
+# rename columns
+total_tripsv2 <- rename(total_tripsv2, rideable_type=bike_type, member_casual=rider_type)
+total_tripsv2 <- rename(total_tripsv2, bike_type=rideable_type, rider_type=member_casual)
+#export last dataset
+setwd("C:/Users/Leopoldine/Desktop/Mine/Coding Projects & Portfolio/Cyclistic Case Study/Cyclistic2022/01_tidy_data")
+# export updated data frame
+write.csv(total_tripsv2, "total_tripsv2.csv", row.names = FALSE)
+setwd("C:/Users/Leopoldine/Desktop/Mine/Coding Projects & Portfolio/Cyclistic Case Study/Cyclistic2022/03_reports")
+setwd("C:/Users/Leopoldine/Desktop/Mine/Coding Projects & Portfolio/Cyclistic Case Study/Cyclistic2022/02_r_scripts")
+savehistory("~/Cyclistic22History.txt")
+save.image("C:/Users/Leopoldine/Desktop/Mine/Coding Projects & Portfolio/Cyclistic Case Study/Cyclistic2022/02_r_scripts.RData")
+gc()
+#descriptive analysis by riders 
+total_tripsv2 %>%
+group_by(rider_type) %>%
+summarize(min = min(duration),
+q1 = quantile(duration, 0.25),
+median = median(duration),
+mean = mean(duration),
+q3 = quantile(duration, 0.75),
+max = max(duration))
+#descriptive analysis by riders 
+options(pillar.sigfig = 5)
+total_tripsv2 %>%
+group_by(rider_type) %>%
+summarize(min = min(duration),
+q1 = quantile(duration, 0.25),
+median = median(duration),
+mean = mean(duration),
+q3 = quantile(duration, 0.75),
+max = max(duration))
+#descriptive analysis by riders 
+options(pillar.sigfig = 5)
+total_tripsv2 %>%
+group_by(rider_type) %>%
+summarize(min = min(duration),
+q1 = quantile(duration, 0.25),
+median = median(duration),
+mean = mean(duration),
+q3 = quantile(duration, 0.75),
+max = max(duration))
+#descriptive analysis by riders 
+options(pillar.sigfig = 5)
+total_tripsv2 %>%
+group_by(rider_type) %>%
+summarize(min = min(duration),
+q1 = quantile(duration, 0.25),
+median = median(duration),
+mean = round(mean(duration), digits = 5),
+q3 = quantile(duration, 0.75),
+max = max(duration))
+#descriptive analysis by riders 
+total_tripsv2 %>%
+group_by(rider_type) %>%
+summarize(min = min(duration),
+q1 = quantile(duration, 0.25),
+median = median(duration),
+mean = round(mean(duration), digits = 2),
+q3 = quantile(duration, 0.75),
+max = max(duration))
+gc()
+#descriptive analysis by riders 
+total_tripsv2 %>%                            
+group_by(rider_type) %>%
+summarize(min = min(duration), 
+q1 = quantile(duration, 0.25), 
+median = median(duration), 
+mean = sprintf("%.2f", mean(duration)), 
+q3 = quantile(duration, 0.75), 
+max = max(duration)) 
+gc()
+##descriptive analysis by riders & bikes 
+total_tripsv2 %>%                            
+group_by(rider_type, bike_type) %>%
+summarize(min = min(duration), 
+q1 = quantile(duration, 0.25), 
+median = median(duration), 
+mean = sprintf("%.2f", mean(duration)),  
+q3 = quantile(duration, 0.75), 
+max = max(duration))
+#total number of rides by riders
+total_tripsv2 %>% count(rider_type)
+#total number of rides by riders
+total_tripsv2 %>% count(rider_type, sort = TRUE)
+#total number of rides by bike type
+total_tripsv2 %>% count(bike_type, sort = TRUE)
+#total number of rides by bike & rider Types
+total_tripsv2 %>% count(bike_type, rider_type, sort = TRUE)
+# avg weekly ride numbers by riders 
+total_tripsv2 %>%                            
+group_by(day_of_week, rider_type) %>%
+summarize(number_of_rides = n()) %>%
+arrange(day_of_week, rider_type) 
+# avg weekly ride numbers by riders 
+total_tripsv2 %>%                            
+group_by(rider_type, day_of_week) %>%
+summarize(number_of_rides = n()) %>%
+arrange(day_of_week, rider_type) 
+# avg weekly ride numbers by riders 
+total_tripsv2$day_of_week <- ordered(total_tripsv2$day_of_week, levels=c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"))
+total_tripsv2 %>%                            
+group_by(rider_type, day_of_week) %>%
+summarize(number_of_rides = n()) %>%
+arrange(day_of_week, rider_type) 
+#avg weekly ride duration by riders 
+total_tripsv2 %>%                            
+group_by(rider_type, day_of_week) %>%
+summarise(duration = mean(duration)) %>%
+arrange(day_of_week, rider_type) 
+#avg weekly ride duration by riders 
+total_tripsv2 %>%                            
+group_by(rider_type, day_of_week) %>%
+summarise(average_duration = sprintf("%.2f", mean(duration))) %>%
+arrange(day_of_week, rider_type) 
+#avg weekly ride duration by riders 
+total_tripsv2$day_of_week <- ordered(total_tripsv2$day_of_week, levels=c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"))
+total_tripsv2 %>%                            
+group_by(rider_type, day_of_week) %>%
+summarise(average_duration = sprintf("%.2f", mean(duration))) %>%
+arrange(day_of_week, rider_type) 
+# monthly number of rides
+total_tripsv2 %>%                            
+group_by(rider_type, month) %>%
+summarise(number_of_rides = n()) %>%
+arrange(month, rider_type) 
+gc()
+#avg montly duration by riders 
+total_tripsv2 %>%                            
+group_by(rider_type, month) %>%
+summarise(average_duration = sprintf("%.2f", mean(duration))) %>%
+arrange(month, rider_type) 
+gc()
+setwd("C:/Users/Leopoldine/Desktop/Mine/Coding Projects & Portfolio/Cyclistic Case Study/Cyclistic2022/03_reports")
+setwd("C:/Users/Leopoldine/Desktop/Mine/Coding Projects & Portfolio/Cyclistic Case Study/Cyclistic2022/02_r_scripts")
+savehistory("~/Cyclistic22History.txt")
+save.image("C:/Users/Leopoldine/Desktop/Mine/Coding Projects & Portfolio/Cyclistic Case Study/Cyclistic2022/02_r_scripts.RData")
+knitr::opts_chunk$set(echo = TRUE) 
+library(dplyr)
+library(ggplot2)
+library(knitr)
+library(lubridate)
+library(tidyr)
+library(tidyverse)
+setwd("C:/Users/Leopoldine/Desktop/Mine/Coding Projects & Portfolio/Cyclistic Case Study/Cyclistic2022/01_tidy_data")
+total_tripsv2 <- read.csv("total_tripsv2.csv")
+View(total_tripsv2)
+#avg weekly ride nums plot
+total_tripsv2 %>% 
+group_by(rider_type, day_of_week) %>%
+summarize(number_of_rides = n()) %>%
+arrange(rider_type, day_of_week) %>%
+ggplot(mapping = aes(x=day_of_week, y=number_of_rides, fill=rider_type)) + 
+geom_col()
+#avg weekly ride nums plot
+total_tripsv2 %>% 
+mutate(weekday = wday(started_at, label=TRUE)) %>%
+group_by(rider_type, weekday) %>%
+summarize(number_of_rides = n()) %>%
+arrange(rider_type, weekday) %>%
+ggplot(mapping = aes(x=weekday, y=number_of_rides, fill=rider_type)) + 
+geom_col() 
+#avg weekly ride nums plot
+total_tripsv2 %>% 
+mutate(weekday = wday(started_at, label=TRUE)) %>%
+group_by(rider_type, weekday) %>%
+summarize(number_of_rides = n()) %>%
+arrange(rider_type, weekday) %>%
+ggplot(mapping = aes(x=weekday, y=number_of_rides, fill=rider_type)) + 
+geom_col(position="dodge")
+#avg weekly ride nums plot
+total_tripsv2 %>% 
+mutate(weekday = wday(started_at, label=TRUE)) %>%
+group_by(rider_type, weekday) %>%
+summarize(number_of_rides = n()) %>%
+arrange(rider_type, weekday) %>%
+ggplot(mapping = aes(x=weekday, y=number_of_rides, fill=rider_type)) + 
+geom_col(position = "dodge") +
+scale_y_continuous(labels = scales::comma) # add commas to y-axis
+#avg weekly ride nums plot
+options(scipen=999) #remove scientific notation from y-axis
+library(scales) # load pkg to scale y-axis
+total_tripsv2 %>% 
+mutate(weekday = wday(started_at, label=TRUE)) %>%
+group_by(rider_type, weekday) %>%
+summarize(number_of_rides = n()) %>%
+arrange(rider_type, weekday) %>%
+ggplot(mapping = aes(x=weekday, y=number_of_rides, fill=rider_type)) + 
+geom_col(position = "dodge") +
+scale_y_continuous(labels = scales::comma) # add commas to y-axis
+# avg weekly ride duration
+total_tripsv2 %>% 
+mutate(weekday = wday(started_at, label=TRUE)) %>%
+group_by(rider_type, weekday) %>%
+summarise(average_duration = mean(duration)) %>%
+arrange(rider_type, weekday) %>%
+ggplot(mapping = aes(x=weekday, y=average_duration, fill=rider_type)) + 
+geom_col(position = "dodge")
+# avg weekly ride duration
+total_tripsv2 %>% 
+mutate(weekday = wday(started_at, label=TRUE)) %>%
+group_by(rider_type, weekday) %>%
+summarise(average_duration = mean(duration)) %>%
+arrange(rider_type, weekday) %>%
+ggplot(mapping = aes(x=weekday, y=average_duration, fill=rider_type)) + 
+geom_col(position = "dodge") + 
+scale_y_continuous(labels = scales::comma) 
+# avg weekly ride duration
+total_tripsv2 %>% 
+mutate(weekday = wday(started_at, label=TRUE)) %>%
+group_by(rider_type, weekday) %>%
+summarise(average_duration = mean(duration)) %>%
+arrange(rider_type, weekday) %>%
+ggplot(mapping = aes(x=weekday, y=average_duration, fill=rider_type)) + 
+geom_col(position = "dodge") + 
+ylab("average_duration(in seconds)") +
+scale_y_continuous(labels = scales::comma) 
+# avg monthly ride numbers 
+total_tripsv2 %>% 
+mutate(months = month(started_at, label=TRUE)) %>%
+group_by(rider_type, months) %>%
+summarise(number_of_rides = n()) %>%
+arrange(rider_type, months) %>%
+ggplot(aes(x = months, y = number_of_rides, color = rider_type, group = rider_type)) +
+geom_line() +
+scale_y_continuous(labels = scales::comma) 
+# avg monthly ride numbers 
+total_tripsv2 %>% 
+mutate(months = month(started_at, label=TRUE)) %>%
+group_by(rider_type, months) %>%
+summarise(number_of_rides = n()) %>%
+arrange(rider_type, months) %>%
+ggplot(aes(x = months, y = number_of_rides, color = rider_type, group = rider_type)) +
+geom_line(linewidth = 1.5) +
+geom_point(size = 1.5) + 
+scale_y_continuous(labels = scales::comma) 
+# avg monthly ride numbers 
+total_tripsv2 %>% 
+mutate(months = month(started_at, label=TRUE)) %>%
+group_by(rider_type, months) %>%
+summarise(number_of_rides = n()) %>%
+arrange(rider_type, months) %>%
+ggplot(aes(x = months, y = number_of_rides, color = rider_type, group = rider_type)) +
+geom_line(linewidth = 1.5) +
+geom_point(size = 2) + 
+scale_y_continuous(labels = scales::comma) 
+# avg monthly ride numbers 
+total_tripsv2 %>% 
+mutate(months = month(started_at, label=TRUE)) %>%
+group_by(rider_type, months) %>%
+summarise(number_of_rides = n()) %>%
+arrange(rider_type, months) %>%
+ggplot(aes(x = months, y = number_of_rides, color = rider_type, group = rider_type)) +
+geom_line(linewidth = 2) +
+geom_point(size = 2) + 
+scale_y_continuous(labels = scales::comma) 
+# avg monthly ride numbers 
+total_tripsv2 %>% 
+mutate(months = month(started_at, label=TRUE)) %>%
+group_by(rider_type, months) %>%
+summarise(number_of_rides = n()) %>%
+arrange(rider_type, months) %>%
+ggplot(aes(x = months, y = number_of_rides, color = rider_type, group = rider_type)) +
+geom_line(linewidth = 2) +
+geom_point(size = 3) + 
+scale_y_continuous(labels = scales::comma) 
+# avg monthly ride numbers 
+total_tripsv2 %>% 
+mutate(months = month(started_at, label=TRUE)) %>%
+group_by(rider_type, months) %>%
+summarise(number_of_rides = n()) %>%
+arrange(rider_type, months) %>%
+ggplot(aes(x = months, y = number_of_rides, color = rider_type, group = rider_type)) +
+geom_line(linewidth = 1.5) +
+geom_point(size = 3) + 
+scale_y_continuous(labels = scales::comma) 
+# avg monthly ride numbers 
+total_tripsv2 %>% 
+mutate(months = month(started_at, label=TRUE)) %>%
+group_by(rider_type, months) %>%
+summarise(number_of_rides = n()) %>%
+arrange(rider_type, months) %>%
+ggplot(aes(x = months, y = number_of_rides, color = rider_type, group = rider_type)) +
+geom_line(linewidth = 1.5) +
+geom_point(size = 3) + 
+scale_y_continuous(labels = scales::comma)
+# avg monthly duration plot
+total_tripsv2 %>% 
+mutate(months = month(started_at, label=TRUE)) %>%
+group_by(rider_type, months) %>%
+summarise(average_duration = mean(duration)) %>%
+arrange(rider_type, months) %>%
+ggplot(mapping = aes(x=months, y=average_duration, fill=rider_type)) + 
+geom_col(position = "dodge") + 
+ylab("average_duration(in seconds)") +
+geom_line(linewidth = 1.5) +
+geom_point(size = 3) + 
+scale_y_continuous(labels = scales::comma) 
+# preferred bikes by riders
+total_tripsv2 %>% 
+group_by(bike_type, rider_type) %>%
+summarize(count=n()) %>%
+ggplot(aes(fill=bike_type, y=count, x=rider_type)) + 
+geom_bar(position="dodge", stat="identity") +
+scale_y_continuous(labels = scales::comma)
+# preferred bikes by riders
+total_tripsv2 %>% 
+group_by(bike_type, rider_type) %>%
+summarize(count=n()) %>%
+ggplot(aes(fill=bike_type, y=count, x=rider_type)) + 
+geom_bar(position="stack", stat="identity") +
+scale_y_continuous(labels = scales::comma)
+# preferred bikes by riders
+total_tripsv2 %>% 
+group_by(bike_type, rider_type) %>%
+summarize(count= n()) %>%
+arrange(bike_type) %>%
+ggplot(aes(fill=bike_type, y=count, x=rider_type)) +
+geom_bar(stat = "identity") +
+geom_text(aes(label=count),
+position=position_stack(vjust=0.5)) +
+scale_y_continuous(labels = scales::comma)
+# preferred bikes by riders
+total_tripsv2$bike_type <-factor(total_tripsv2$bike_type,(levels =c("docked_bike", "classic_bike", "electric_bike"))) 
+total_tripsv2 %>% 
+group_by(bike_type, rider_type) %>%
+summarize(count= n()) %>%
+arrange(bike_type) %>%
+ggplot(aes(fill=bike_type, y=count, x=rider_type)) +
+geom_bar(stat = "identity") +
+geom_text(aes(label=count),
+position=position_stack(vjust=0.5), color="white") +
+scale_y_continuous(labels = scales::comma)
+# preferred bikes by riders
+total_tripsv2$bike_type <-factor(total_tripsv2$bike_type,(levels =c("docked_bike", "classic_bike", "electric_bike"))) 
+total_tripsv2 %>% 
+count(bike_type, rider_type, sort = TRUE) %>%
+group_by(rider_type) %>%
+mutate(pct= prop.table(n) * 100) %>%
+arrange(bike_type) %>%
+ggplot(aes(fill=bike_type, y=pt, x=rider_type)) +
+geom_bar(stat = "identity") +
+geom_text(aes(label=paste0(sprintf("%1.2f", pct),"%")),
+position=position_stack(vjust=0.5)) +
+scale_y_continuous(labels = scales::comma) 
+# preferred bikes by riders
+total_tripsv2$bike_type <-factor(total_tripsv2$bike_type,(levels =c("docked_bike", "classic_bike", "electric_bike"))) 
+total_tripsv2 %>% 
+count(bike_type, rider_type, sort = TRUE) %>%
+group_by(rider_type) %>%
+mutate(pct= prop.table(n) * 100) %>%
+arrange(bike_type) %>%
+ggplot(aes(fill=bike_type, y=pct, x=rider_type)) +
+geom_bar(stat = "identity") +
+geom_text(aes(label=paste0(sprintf("%1.2f", pct),"%")),
+position=position_stack(vjust=0.5)) 
+# preferred bikes by riders
+total_tripsv2$bike_type <-factor(total_tripsv2$bike_type,(levels =c("docked_bike", "classic_bike", "electric_bike"))) 
+total_tripsv2 %>% 
+count(bike_type, rider_type, sort = TRUE) %>%
+group_by(rider_type) %>%
+mutate(pct= prop.table(n) * 100) %>%
+arrange(bike_type) %>%
+ggplot(aes(fill=bike_type, y=pct, x=rider_type)) +
+geom_bar(stat = "identity") +
+ylab("Percentage of Rides") +
+geom_text(aes(label=paste0(sprintf("%1.2f", pct),"%")),
+position=position_stack(vjust=0.5), color = "white") 
+gc()
+setwd("C:/Users/Leopoldine/Desktop/Mine/Coding Projects & Portfolio/Cyclistic Case Study/Cyclistic2022/03_reports")
+setwd("C:/Users/Leopoldine/Desktop/Mine/Coding Projects & Portfolio/Cyclistic Case Study/Cyclistic2022/02_r_scripts")
+save.image("~/Cyclistic22 workspace.RData")
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(ggplot2)
+library(knitr)
+library(lubridate)
+library(tidyr)
+library(tidyverse)
+# set directory and import data files
+setwd("C:/Users/Leopoldine/Desktop/Mine/Coding Projects & Portfolio/Cyclistic Case Study/Cyclistic2022/00_raw_data")
+m1_2022 <- read.csv("202201-divvy-tripdata.csv")
+m2_2022 <- read.csv("202202-divvy-tripdata.csv")
+m3_2022 <- read.csv("202203-divvy-tripdata.csv")
+m4_2022 <- read.csv("202204-divvy-tripdata.csv")
+m5_2022 <- read.csv("202205-divvy-tripdata.csv")
+m6_2022 <- read.csv("202206-divvy-tripdata.csv")
+m7_2022 <- read.csv("202207-divvy-tripdata.csv")
+m8_2022 <- read.csv("202208-divvy-tripdata.csv")
+m9_2022 <- read.csv("202209-divvy-publictripdata.csv")
+m10_2022 <- read.csv("202210-divvy-tripdata.csv")
+m11_2022 <- read.csv("202211-divvy-tripdata.csv")
+m12_2022 <- read.csv("202212-divvy-tripdata.csv")
+#combine multiple data into one 
+total_trips <- bind_rows(m1_2022, m2_2022, m3_2022, m4_2022, m5_2022, m6_2022, m7_2022, m8_2022, m9_2022, m10_2022, m11_2022, m12_2022)
+str(total_trips)  #inspect new data frame
+#export file in case of error
+setwd("C:/Users/Leopoldine/Desktop/Mine/Coding Projects & Portfolio/Cyclistic Case Study/Cyclistic2022/01_tidy_data")
+#export copy of new data frame just in case
+write.csv(total_trips, "total_trips.csv", row.names = FALSE)
+total_trips$date <- as.Date(total_trips$started_at)  #The default format is yyyy-mm-dd
+total_trips$month <- format(as.Date(total_trips$date), "%m")  #month of start date
+total_trips$day_of_week <- format(as.Date(total_trips$date), "%A")  #full name of the day of week of start date(Sunday, Saturday)
+total_trips$duration <- difftime(total_trips$ended_at,total_trips$started_at)  #ride length in seconds
+str(total_trips) 
+setwd("C:/Users/Leopoldine/Desktop/Mine/Coding Projects & Portfolio/Cyclistic Case Study/Cyclistic2022/01_tidy_data")
+total_tripsv2 <- total_trips
+write.csv(total_tripsv2, "total_tripsv2.csv", row.names = FALSE)
+# change data type for calc
+#remove seconds for calculations
+total_tripsv2$duration <- as.numeric(total_tripsv2$duration)
+# confirm data type change
+str(total_tripsv2$duration)
+#remove neg vals from 'duration'
+total_tripsv2 <- total_tripsv2[!(total_tripsv2$duration<0),]
+#remove columns
+total_tripsv2 <- total_tripsv2[, -9:-12] #removing 4 columns: start_lat, start_lng, end_lat, end_lng 
+# rename columns
+total_tripsv2 <- rename(total_tripsv2, bike_type=rideable_type, rider_type=member_casual)
+#export last dataset
+setwd("C:/Users/Leopoldine/Desktop/Mine/Coding Projects & Portfolio/Cyclistic Case Study/Cyclistic2022/01_tidy_data")
+# export updated data frame
+write.csv(total_tripsv2, "total_tripsv2.csv", row.names = FALSE)
+#summary duration by rider type
+total_tripsv2 %>%                            
+group_by(rider_type) %>%
+summarize(min = min(duration), 
+q1 = quantile(duration, 0.25), 
+median = median(duration), 
+mean = sprintf("%.2f", mean(duration)), 
+q3 = quantile(duration, 0.75), 
+max = max(duration)) 
+#summary duration by rider & bike types
+total_tripsv2 %>%                            
+group_by(rider_type, bike_type) %>%
+summarize(min = min(duration), 
+q1 = quantile(duration, 0.25), 
+median = median(duration), 
+mean = sprintf("%.2f", mean(duration)), 
+q3 = quantile(duration, 0.75), 
+max = max(duration))
+#total trip count by rider type
+total_tripsv2 %>% count(rider_type, sort = TRUE)
+# total trip count by bike type
+total_tripsv2 %>% count(bike_type, sort = TRUE)
+#total trip count by bike & rider type
+total_tripsv2 %>% count(bike_type, rider_type, sort = TRUE)
+# total weekly ride numbers by riders 
+total_tripsv2$day_of_week <- ordered(total_tripsv2$day_of_week, levels=c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"))
+total_tripsv2 %>%                            
+group_by(rider_type, day_of_week) %>%
+arrange(day_of_week, rider_type)
+# avg weekly ride duration by riders 
+total_tripsv2$day_of_week <- ordered(total_tripsv2$day_of_week, levels=c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"))
+total_tripsv2 %>%                            
+group_by(rider_type, day_of_week) %>%
+summarise(average_duration = mean(duration)) %>%
+arrange(day_of_week, rider_type) 
+# total monthly ride numbers by riders
+total_tripsv2 %>%                            
+group_by(rider_type, month) %>%
+summarise(number_of_rides = n()) %>%
+arrange(month, rider_type) 
+# avg monthly ride duration
+total_tripsv2 %>%                            
+group_by(rider_type, month) %>%
+summarise(average_duration = mean(duration)) %>%
+arrange(month, rider_type) 
+total_tripsv2$bike_type <-factor(total_tripsv2$bike_type,(levels =c("docked_bike", "classic_bike", "electric_bike"))) 
+total_tripsv2 %>% 
+count(bike_type, rider_type, sort = TRUE) %>%
+group_by(rider_type) %>%
+mutate(pct= prop.table(n) * 100) %>%
+arrange(bike_type) %>%
+ggplot(aes(fill=bike_type, y=pct, x=rider_type)) +
+geom_bar(stat = "identity") +
+ylab("Percentage of Rides") +
+geom_text(aes(label=paste0(sprintf("%1.2f", pct),"%")),
+position=position_stack(vjust=0.5), color = "white") +
+scale_y_continuous(labels = scales::comma) 
+options(scipen=999) #remove scientific notation from y-axis
+library(scales) # load pkg to scale y-axis
+total_tripsv2$day_of_week <- ordered(total_tripsv2$day_of_week, levels=c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"))
+total_tripsv2 %>% 
+mutate(weekday = wday(started_at, label=TRUE)) %>%
+group_by(rider_type, weekday) %>%
+summarize(number_of_rides = n()) %>%
+arrange(rider_type, weekday) %>%
+ggplot(mapping = aes(x=weekday, y=number_of_rides, fill=rider_type)) + 
+geom_col(position = "dodge") +
+scale_y_continuous(labels = scales::comma) # add commas to y-axis
+total_tripsv2$day_of_week <- ordered(total_tripsv2$day_of_week, levels=c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"))
+total_tripsv2 %>% 
+mutate(weekday = wday(started_at, label=TRUE)) %>%
+group_by(rider_type, weekday) %>%
+summarise(average_duration = mean(duration)) %>%
+arrange(rider_type, weekday) %>%
+ggplot(mapping = aes(x=weekday, y=average_duration, fill=rider_type)) + 
+geom_col(position = "dodge") + 
+ylab("average_duration(in seconds)") +
+scale_y_continuous(labels = scales::comma) 
+total_tripsv2 %>% 
+mutate(months = month(started_at, label=TRUE)) %>%
+group_by(rider_type, months) %>%
+summarise(number_of_rides = n()) %>%
+arrange(rider_type, months) %>%
+ggplot(aes(x = months, y = number_of_rides, color = rider_type, group = rider_type)) +
+geom_line(linewidth = 1.5) +
+geom_point(size = 3) + 
+scale_y_continuous(labels = scales::comma) 
+total_tripsv2 %>% 
+mutate(months = month(started_at, label=TRUE)) %>%
+group_by(rider_type, months) %>%
+summarise(average_duration = mean(duration)) %>%
+arrange(rider_type, months) %>%
+ggplot(aes(x = months, y = average_duration, color = rider_type, group = rider_type)) +
+geom_line(linewidth = 1.5) +
+geom_point(size = 3) + 
+ylab("average_duration(in seconds)") +
+scale_y_continuous(labels = scales::comma) 
+total_tripsv2 %>%                            
+group_by(rider_type, month) %>%
+summarise(number_of_rides = n()) %>%
+arrange(month, rider_type) 
+total_tripsv2 %>%                            
+group_by(rider_type, month) %>%
+summarise(number_of_rides = n()) %>%
+arrange(month, rider_type) %>%
+print(n=24)
+setwd("C:/Users/Leopoldine/Desktop/Mine/Coding Projects & Portfolio/Cyclistic Case Study/Cyclistic2022/03_reports")
+# top 5 end stations destinations
+top_5_stations <- total_tripsv2 %>%
+group_by(rider_type, end_station_name) %>%
+summarize(count = n()) %>%
+arrange(rider_type) %>%
+slice(1:5)
+View(top_5_stations)
+top_5_stations <- total_tripsv2 %>%
+group_by(rider_type, end_station_name) %>%
+summarize(count = n()) %>%
+arrange(rider_type, desc(count)) %>%
+slice(1:5)
+View(top_5_stations)
+top_5_stations <- total_tripsv2 %>%
+group_by(rider_type, end_station_name) %>%
+summarize(count = n()) %>%
+arrange(rider_type, desc(count)) %>%
+slice(1:5) %>%
+sub("^$", "Start Station")
+top_5_stations <- total_tripsv2 %>%
+group_by(rider_type, end_station_name) %>%
+summarize(count = n()) %>%
+arrange(rider_type, desc(count)) %>%
+slice(1:5) %>%
+sub("\\s+$", "Start Station")
+top_5_stations <- total_tripsv2 %>%
+group_by(rider_type, end_station_name) %>%
+summarize(count = n()) %>%
+arrange(rider_type, desc(count)) %>%
+slice(1:5) %>%
+top_5_stations <- total_tripsv2 %>%
+group_by(rider_type, end_station_name) %>%
+summarize(count = n()) %>%
+arrange(rider_type, desc(count)) %>%
+slice(1:5)
+View(top_5_stations)
+top_5_stations <- total_tripsv2 %>%
+group_by(rider_type, end_station_name) %>%
+summarize(count = n()) %>%
+arrange(rider_type, desc(count)) %>%
+slice(1:5) %>%
+replace('', Start Station)
+top_5_stations <- total_tripsv2 %>%
+group_by(rider_type, end_station_name) %>%
+summarize(count = n()) %>%
+arrange(rider_type, desc(count)) %>%
+slice(1:5)
+replace(total_tripsv2, total_tripsv2=='', 'Start Station')
+View(top_5_stations)
+View(total_tripsv2)
+View(top_5_stations)
+top_5_stations <- total_tripsv2 %>%
+group_by(rider_type, end_station_name) %>%
+summarize(count = n()) %>%
+arrange(rider_type, desc(count)) %>%
+slice(1:5)
+gc()
+rm(total_tripsv2)
+total_tripsv2 <- read.csv("total_tripsv2.csv")
+top_5_stations <- total_tripsv2 %>%
+group_by(rider_type, end_station_name) %>%
+summarize(count = n()) %>%
+arrange(rider_type, desc(count)) %>%
+replace(total_tripsv2, total_tripsv2=='', 'Start Station') %>%
+slice(1:5)
+top_5_stations <- total_tripsv2 %>%
+group_by(rider_type, end_station_name) %>%
+summarize(count = n()) %>%
+arrange(rider_type, desc(count)) %>%
+replace('', 'Start Station') %>%
+slice(1:5)
+top_5_stations <- total_tripsv2 %>%
+group_by(rider_type, end_station_name) %>%
+summarize(count = n()) %>%
+arrange(rider_type, desc(count)) %>%
+replace('', Start Station) %>%
+top_5_stations <- total_tripsv2 %>%
+group_by(rider_type, end_station_name) %>%
+summarize(count = n()) %>%
+arrange(rider_type, desc(count)) %>%
+replace('', 'Start Station') %>%
+slice(1:5)
+top_5_stations <- total_tripsv2 %>%
+group_by(rider_type, end_station_name) %>%
+summarize(count = n()) %>%
+arrange(rider_type, desc(count)) %>%
+replace('','Start Station') %>%
+slice(1:5)
+top_5_stations <- total_tripsv2 %>%
+group_by(rider_type, end_station_name) %>%
+summarize(count = n()) %>%
+arrange(rider_type, desc(count)) %>%
+replace('','Start Station') %>%
+slice(1:5)
+View(top_5_stations)
+top_5_stations <- total_tripsv2 %>%
+group_by(rider_type, end_station_name) %>%
+summarize(count = n()) %>%
+arrange(rider_type, desc(count)) %>%
+slice(1:5) %>%
+replace(' ',Start Station)
+top_5_stations <- total_tripsv2 %>%
+group_by(rider_type, end_station_name) %>%
+summarize(count = n()) %>%
+arrange(rider_type, desc(count)) %>%
+slice(1:5) %>%
+replace(' ', Start Station)
+top_5_stations <- total_tripsv2 %>%
+group_by(rider_type, end_station_name) %>%
+summarize(count = n()) %>%
+arrange(rider_type, desc(count)) %>%
+slice(1:5) %>%
+replace(top_5_stations, top_5_stations=' ', Start Station)
+top_5_stations <- total_tripsv2 %>%
+group_by(rider_type, end_station_name) %>%
+summarize(count = n()) %>%
+arrange(rider_type, desc(count)) %>%
+slice(1:5) %>%
+replace(top_5_stations, top_5_station$end_station_name=' ', 'Start Station')
+top_5_stations <- total_tripsv2 %>%
+group_by(rider_type, end_station_name) %>%
+summarize(count = n()) %>%
+arrange(rider_type, desc(count)) %>%
+slice(1:5) %>%
+replace(top_5_stations, top_5_station$end_station_name==' ', 'Start Station')
+top_5_stations <- total_tripsv2 %>%
+group_by(rider_type, end_station_name) %>%
+summarize(count = n()) %>%
+arrange(rider_type, desc(count)) %>%
+slice(1:5) %>%
+replace(top_5_stations,top_5_station$end_station_name==' ',Start Station)
+top_5_stations <- total_tripsv2 %>%
+group_by(rider_type, end_station_name) %>%
+summarize(count = n()) %>%
+arrange(rider_type, desc(count)) %>%
+#mutate(end_station_name = na_if(end_station_name, " "))
+slice(1:5) %>%
+replace(top_5_stations,top_5_station$end_station_name== " ",Start Station)
+top_5_stations <- total_tripsv2 %>%
+group_by(rider_type, end_station_name) %>%
+summarize(count = n()) %>%
+arrange(rider_type, desc(count)) %>%
+#mutate(end_station_name = na_if(end_station_name, " "))
+slice(1:5) %>%
+replace(top_5_stations,top_5_station= " ",Start Station)
+top_5_stations <- total_tripsv2 %>%
+group_by(rider_type, end_station_name) %>%
+summarize(count = n()) %>%
+arrange(rider_type, desc(count)) %>%
+#mutate(end_station_name = na_if(end_station_name, " "))
+slice(1:5) %>%
+replace(top_5_stations,top_5_stations= " ",Start Station)
+top_5_stations <- total_tripsv2 %>%
+group_by(rider_type, end_station_name) %>%
+summarize(count = n()) %>%
+arrange(rider_type, desc(count)) %>%
+mutate(end_station_name = na_if(end_station_name, " "))
+top_5_stations <- total_tripsv2 %>%
+group_by(rider_type, end_station_name) %>%
+summarize(count = n()) %>%
+arrange(rider_type, desc(count)) %>%
+mutate(end_station_name = na_if(end_station_name, " ")) %>%
+slice(1:5)
+View(top_5_stations)
+top_5_stations <- total_tripsv2 %>%
+group_by(rider_type, end_station_name) %>%
+summarize(count = n()) %>%
+arrange(rider_type, desc(count)) %>%
+slice(1:5)
+NA <- top_5_stations[top_5_stations='']
+top_5_stations <- total_tripsv2 %>%
+group_by(rider_type, end_station_name) %>%
+summarize(count = n()) %>%
+arrange(rider_type, desc(count)) %>%
+slice(1:5)
+top_5_stations$end_station_name[which(top_5_stations$end_station_name == "")] <- "NA"
+print(top_5_stations)
+top_5_stations$end_station_name[which(top_5_stations$end_station_name == "")] <- "NA"
+print(top_5_stations)
+top_5_stations <- total_tripsv2 %>%
+group_by(rider_type, end_station_name) %>%
+summarize(count = n()) %>%
+arrange(rider_type, desc(count)) %>%
+slice(1:5)
+top_5_stations$end_station_name[which(top_5_stations$end_station_name == "")] <- "NA"
+View(total_tripsv2)
+top_5_stations <- total_tripsv2 %>%
+group_by(rider_type, end_station_name) %>%
+summarize(count = n()) %>%
+arrange(rider_type, desc(count)) %>%
+slice(1:6)
+top_5_stations$end_station_name[which(top_5_stations$end_station_name == "")] <- "NA" #remove blank field and values
+print(top_5_stations)
+top_5_stations <- total_tripsv2 %>%
+group_by(rider_type, end_station_name) %>%
+summarize(count = n()) %>%
+arrange(rider_type, desc(count)) %>%
+slice(1:6)
+top_5_stations[!(top_5_stations$end_station_name==""),]
+print(top_5_stations)
+View(top_5_stations)
+top_5_stations <- total_tripsv2 %>%
+group_by(rider_type, end_station_name) %>%
+summarize(number_of_rides = n()) %>%
+arrange(rider_type, desc(number_of_rides)) %>%
+slice(1:6)
+top_5_stations <- top_5_stations[!(is.na(top_5_stations$end_station_name) | top_5_stations$end_station_name==""),]  #remove blank field and values
+print(top_5_stations)
+# export table for future use
+setwd("C:/Users/Leopoldine/Desktop/Mine/Coding Projects & Portfolio/Cyclistic Case Study/Cyclistic2022/01_tidy_data")
+write.csv(top_5_stations, "top_5_stations.csv", row.names = FALSE)
+gc()
+setwd("C:/Users/Leopoldine/Desktop/Mine/Coding Projects & Portfolio/Cyclistic Case Study/Cyclistic2022/02_r_scripts")
+savehistory("~/Cyclistic22History.txt")
+save.image("~/Cyclistic22 workspace.RData")
+knitr::opts_chunk$set(echo = TRUE) 
+library(dplyr)
+library(ggplot2)
+library(knitr)
+library(lubridate)
+library(tidyr)
+library(tidyverse)
+total_tripsv2 <- read.csv("total_tripsv2.csv")
+#Top 5 End Station Destinations 
+total_tripsv2 %>%
+group_by(rider_type, end_station_name) %>%
+summarize(number_of_rides = n()) %>%
+arrange(rider_type, end_station_name) %>%
+ggplot(mapping = aes(x=end_station_name, y=number_of_rides, fill=rider_type)) +
+geom_col(position = "dodge") +
+scale_y_continuous(labels = scales::comma)
+#Top 5 End Station Destinations 
+total_tripsv2 %>%
+group_by(rider_type, end_station_name) %>%
+summarize(number_of_rides = n()) %>%
+arrange(rider_type, end_station_name) %>%
+ggplot(mapping = aes(x=rider_type, y=number_of_rides, fill=end_station_name)) +
+geom_col(position = "dodge") +
+scale_y_continuous(labels = scales::comma)
+#Top 5 End Station Destinations 
+total_tripsv2 %>%
+group_by(rider_type, end_station_name) %>%
+summarize(number_of_rides = n()) %>%
+arrange(rider_type, end_station_name) %>%
+slice(1:6) %>%
+ggplot(mapping = aes(x=rider_type, y=number_of_rides, fill=end_station_name)) +
+geom_col(position = "dodge") +
+scale_y_continuous(labels = scales::comma)
+#Top 5 End Station Destinations 
+total_tripsv2 %>%
+group_by(rider_type, end_station_name) %>%
+summarize(number_of_rides = n()) %>%
+arrange(rider_type, end_station_name) %>%
+slice(1:6) %>%
+ggplot(mapping = aes(x=end_station_name, y=number_of_rides, fill=rider_type)) +
+geom_col(position = "dodge") +
+scale_y_continuous(labels = scales::comma)
+#Top 5 End Station Destinations 
+total_tripsv2 %>%
+group_by(rider_type, end_station_name) %>%
+summarize(number_of_rides = n()) %>%
+arrange(rider_type, end_station_name) %>%
+slice(1:6) %>%
+ggplot(mapping = aes(x=number_of_rides, y=rider_type, fill=end_station_name)) +
+geom_col(position = "dodge") +
+scale_y_continuous(labels = scales::comma)
+#Top 5 End Station Destinations 
+total_tripsv2 %>%
+group_by(rider_type, end_station_name) %>%
+summarize(number_of_rides = n()) %>%
+arrange(rider_type, end_station_name) %>%
+slice(1:6) %>%
+ggplot(mapping = aes(x=end_station_name, y=number_of_rides, fill=rider_type)) +
+geom_col(position = "dodge") +
+scale_y_continuous(labels = scales::comma)
+#Top 5 End Station Destinations 
+total_tripsv2 %>%
+group_by(rider_type, end_station_name) %>%
+summarize(number_of_rides = n()) %>%
+arrange(rider_type, end_station_name) %>%
+slice(1:6) %>%
+ggplot(mapping = aes(x=rider_type, y=number_of_rides, fill=end_station_name)) +
+geom_col(position = "dodge") +
+scale_y_continuous(labels = scales::comma)
+#Top 5 End Station Destinations 
+top_5_stations$end_station_name <- factor(top_5_stations$end_station_name, (levels=c("Clinton St & Washington Blvd", "University Ave & 57th St", "Wells St & Concord Ln","Clark St & Elm St", "Kingsbury St & Kinzie St", "DuSable Lake Shore Dr & North Blvd", "Michigan Ave & Oak St", "Milennium Park", "DuSable Lake Shore Dr & Monroe St","Streeter Dr & Grand Ave")))
+top_5_stations %>%
+ggplot(aes(x=rider_type, y=number_of_rides, fill=end_station_name, label=number_of_rides)) +
+geom_bar(stat = "identity") +
+geom_text(aes(label=format(number_of_rides, big.mark = ",")), position=position_stack(vjust=0.5), color="white") +
+scale_y_continuous(labels = scales::comma)
+#Top 5 End Station Destinations 
+top_5_stations$end_station_name <- factor(top_5_stations$end_station_name, (levels=c("Clinton St & Washington Blvd", "University Ave & 57th St", "Wells St & Concord Ln","Clark St & Elm St", "Kingsbury St & Kinzie St", "DuSable Lake Shore Dr & North Blvd", "Michigan Ave & Oak St", "Millennium Park", "DuSable Lake Shore Dr & Monroe St","Streeter Dr & Grand Ave")))
+top_5_stations %>%
+ggplot(aes(x=rider_type, y=number_of_rides, fill=end_station_name, label=number_of_rides)) + 
+geom_bar(stat = "identity") + 
+geom_text(aes(label=format(number_of_rides, big.mark = ",")), position=position_stack(vjust=0.5), color="white") +
+scale_y_continuous(labels = scales::comma)
+setwd("C:/Users/Leopoldine/Desktop/Mine/Coding Projects & Portfolio/Cyclistic Case Study/Cyclistic2022/03_reports")
+setwd("C:/Users/Leopoldine/Desktop/Mine/Coding Projects & Portfolio/Cyclistic Case Study/Cyclistic2022/02_r_scripts")
+savehistory("~/Cyclistic22History.txt")
+save.image("~/Cyclistic22 workspace.RData")
+knitr::opts_chunk$set(echo = TRUE) 
+library(dplyr)
+library(ggplot2)
+library(knitr)
+library(lubridate)
+library(tidyr)
+library(tidyverse)
+setwd("C:/Users/Leopoldine/Desktop/Mine/Coding Projects & Portfolio/Cyclistic Case Study/Cyclistic2022/00_raw_data")
+m1_2022 <- read.csv("202201-divvy-tripdata.csv")
+m2_2022 <- read.csv("202202-divvy-tripdata.csv")
+m3_2022 <- read.csv("202203-divvy-tripdata.csv")
+m4_2022 <- read.csv("202204-divvy-tripdata.csv")
+m5_2022 <- read.csv("202205-divvy-tripdata.csv")
+m6_2022 <- read.csv("202206-divvy-tripdata.csv")
+m7_2022 <- read.csv("202207-divvy-tripdata.csv")
+m8_2022 <- read.csv("202208-divvy-tripdata.csv")
+m9_2022 <- read.csv("202209-divvy-publictripdata.csv")
+m10_2022 <- read.csv("202210-divvy-tripdata.csv")
+m11_2022 <- read.csv("202211-divvy-tripdata.csv")
+m12_2022 <- read.csv("202212-divvy-tripdata.csv")
+total_trips <- bind_rows(m1_2022, m2_2022, m3_2022, m4_2022, m5_2022, m6_2022, m7_2022, m8_2022, m9_2022, m10_2022, m11_2022, m12_2022)
+str(total_trips)  #inspect new data frame
+setwd("C:/Users/Leopoldine/Desktop/Mine/Coding Projects & Portfolio/Cyclistic Case Study/Cyclistic2022/01_tidy_data")
+#export copy of new data frame just in case
+write.csv(total_trips, "total_trips.csv", row.names = FALSE)
+total_trips$date <- as.Date(total_trips$started_at)  #The default format is yyyy-mm-dd
+total_trips$month <- format(as.Date(total_trips$date), "%m")  #month of start date
+total_trips$day_of_week <- format(as.Date(total_trips$date), "%A")  #full name of the day of week of start date(Sunday, Saturday)
+total_trips$duration <- difftime(total_trips$ended_at,total_trips$started_at)  #ride length in seconds
+str(total_trips) 
+setwd("C:/Users/Leopoldine/Desktop/Mine/Coding Projects & Portfolio/Cyclistic Case Study/Cyclistic2022/01_tidy_data")
+total_tripsv2 <- total_trips
+write.csv(total_tripsv2, "total_tripsv2.csv", row.names = FALSE)
+#remove seconds for calculations
+total_tripsv2$duration <- as.numeric(total_tripsv2$duration)
+# confirm data type change
+str(total_tripsv2$duration)
+total_tripsv2 <- total_tripsv2[!(total_tripsv2$duration<0),]
+total_tripsv2 <- total_tripsv2[, -9:-12] #removing 4 columns: start_lat, start_lng, end_lat, end_lng 
+total_tripsv2 <- rename(total_tripsv2, bike_type=rideable_type, rider_type=member_casual)
+setwd("C:/Users/Leopoldine/Desktop/Mine/Coding Projects & Portfolio/Cyclistic Case Study/Cyclistic2022/01_tidy_data")
+# export updated data frame
+write.csv(total_tripsv2, "total_tripsv2.csv", row.names = FALSE)
+total_tripsv2 %>%                            
+group_by(rider_type) %>%
+summarize(min = min(duration), 
+q1 = quantile(duration, 0.25), 
+median = median(duration), 
+mean = sprintf("%.2f", mean(duration)), 
+q3 = quantile(duration, 0.75), 
+max = max(duration)) 
+total_tripsv2 %>%                            
+group_by(rider_type, bike_type) %>%
+summarize(min = min(duration), 
+q1 = quantile(duration, 0.25), 
+median = median(duration), 
+mean = sprintf("%.2f", mean(duration)), 
+q3 = quantile(duration, 0.75), 
+max = max(duration))
+total_tripsv2 %>% count(rider_type, sort = TRUE)
+total_tripsv2 %>% count(bike_type, sort = TRUE)
+total_tripsv2 %>% count(bike_type, rider_type, sort = TRUE)
+total_tripsv2$day_of_week <- ordered(total_tripsv2$day_of_week, levels=c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"))
+total_tripsv2 %>%                            
+group_by(rider_type, day_of_week) %>%
+summarize(number_of_rides = n()) %>%
+arrange(day_of_week, rider_type)
+total_tripsv2$day_of_week <- ordered(total_tripsv2$day_of_week, levels=c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"))
+total_tripsv2 %>%                            
+group_by(rider_type, day_of_week) %>%
+summarise(average_duration = mean(duration)) %>%
+arrange(day_of_week, rider_type) 
+total_tripsv2 %>%                            
+group_by(rider_type, month) %>%
+summarise(number_of_rides = n()) %>%
+arrange(month, rider_type) 
+print(n=24)
+top_5_stations <- total_tripsv2 %>%
+group_by(rider_type, end_station_name) %>%
+summarize(number_of_rides = n()) %>%
+arrange(rider_type, desc(number_of_rides)) %>%
+slice(1:6)
+top_5_stations <- top_5_stations[!(is.na(top_5_stations$end_station_name) | top_5_stations$end_station_name==""),]  #remove blank field and values
+print(top_5_stations)
+total_tripsv2$bike_type <-factor(total_tripsv2$bike_type,(levels =c("docked_bike", "classic_bike", "electric_bike"))) 
+total_tripsv2 %>% 
+count(bike_type, rider_type, sort = TRUE) %>%
+group_by(rider_type) %>%
+mutate(pct= prop.table(n) * 100) %>%
+arrange(bike_type) %>%
+ggplot(aes(fill=bike_type, y=pct, x=rider_type)) +
+geom_bar(stat = "identity") +
+ylab("Percentage of Rides") +
+geom_text(aes(label=paste0(sprintf("%1.2f", pct),"%")),
+position=position_stack(vjust=0.5), color = "white") +
+scale_y_continuous(labels = scales::comma) 
+options(scipen=999) #remove scientific notation from y-axis
+library(scales) # load pkg to scale y-axis
+total_tripsv2$day_of_week <- ordered(total_tripsv2$day_of_week, levels=c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"))
+total_tripsv2 %>% 
+mutate(weekday = wday(started_at, label=TRUE)) %>%
+group_by(rider_type, weekday) %>%
+summarize(number_of_rides = n()) %>%
+arrange(rider_type, weekday) %>%
+ggplot(mapping = aes(x=weekday, y=number_of_rides, fill=rider_type)) + 
+geom_col(position = "dodge") +
+scale_y_continuous(labels = scales::comma) # add commas to y-axis
+total_tripsv2$day_of_week <- ordered(total_tripsv2$day_of_week, levels=c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"))
+total_tripsv2 %>% 
+mutate(weekday = wday(started_at, label=TRUE)) %>%
+group_by(rider_type, weekday) %>%
+summarise(average_duration = mean(duration)) %>%
+arrange(rider_type, weekday) %>%
+ggplot(mapping = aes(x=weekday, y=average_duration, fill=rider_type)) + 
+geom_col(position = "dodge") + 
+ylab("average_duration(in seconds)") +
+scale_y_continuous(labels = scales::comma) 
+total_tripsv2 %>% 
+mutate(months = month(started_at, label=TRUE)) %>%
+group_by(rider_type, months) %>%
+summarise(number_of_rides = n()) %>%
+arrange(rider_type, months) %>%
+ggplot(aes(x = months, y = number_of_rides, color = rider_type, group = rider_type)) +
+geom_line(linewidth = 1.5) +
+geom_point(size = 3) + 
+scale_y_continuous(labels = scales::comma) 
+top_5_stations$end_station_name <- factor(top_5_stations$end_station_name, (levels=c("Clinton St & Washington Blvd", "University Ave & 57th St", "Wells St & Concord Ln","Clark St & Elm St", "Kingsbury St & Kinzie St", "DuSable Lake Shore Dr & North Blvd", "Michigan Ave & Oak St", "Millennium Park", "DuSable Lake Shore Dr & Monroe St","Streeter Dr & Grand Ave")))
+top_5_stations %>%
+ggplot(aes(x=rider_type, y=number_of_rides, fill=end_station_name, label=number_of_rides)) + 
+geom_bar(stat = "identity") + 
+geom_text(aes(label=format(number_of_rides, big.mark = ",")), position=position_stack(vjust=0.5), color="white") +
+scale_y_continuous(labels = scales::comma)
+setwd("C:/Users/Leopoldine/Desktop/Mine/Coding Projects & Portfolio/Cyclistic Case Study/Cyclistic2022/03_reports")
+setwd("C:/Users/Leopoldine/Desktop/Mine/Coding Projects & Portfolio/Cyclistic Case Study/Cyclistic2022/02_r_scripts")
+savehistory("~/Cyclistic22History.txt")
+save.image("~/Cyclistic22 workspace.RData")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
