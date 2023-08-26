@@ -390,6 +390,20 @@ print(top_5_stations)
 
 #### Preferred Bikes among Riders
 
+``` r
+total_tripsv2$bike_type <-factor(total_tripsv2$bike_type,(levels =c("docked_bike", "classic_bike", "electric_bike"))) 
+total_tripsv2 %>% 
+  count(bike_type, rider_type, sort = TRUE) %>%
+  group_by(rider_type) %>%
+  mutate(pct= prop.table(n) * 100) %>%
+    arrange(bike_type) %>%
+      ggplot(aes(fill=bike_type, y=pct, x=rider_type)) +
+        geom_bar(stat = "identity") +
+        ylab("Percentage of Rides") +
+          geom_text(aes(label=paste0(sprintf("%1.2f", pct),"%")),
+            position=position_stack(vjust=0.5), color = "white") 
+```
+
 ![](Cyclistic-Case-Study-2022_files/figure-gfm/unnamed-chunk-23-1.png)<!-- -->
 
 The electric bike is the most popular bike among casual riders. The
@@ -398,6 +412,20 @@ electric bike close behind. The docked bike was only used by casual
 riders, but made up a small percentage of their total ride count.
 
 #### Total Weekday Ride Count
+
+``` r
+options(scipen=999) #remove scientific notation from y-axis
+library(scales) # load pkg to scale y-axis
+
+total_tripsv2 %>% 
+  mutate(weekday = wday(started_at, label=TRUE)) %>%
+  group_by(rider_type, weekday) %>%
+    summarize(number_of_rides = n()) %>%
+    arrange(rider_type, weekday) %>%
+ggplot(mapping = aes(x=weekday, y=number_of_rides, fill=rider_type)) + 
+  geom_col(position = "dodge") +
+  scale_y_continuous(labels = scales::comma) # add commas to y-axis
+```
 
 ![](Cyclistic-Case-Study-2022_files/figure-gfm/unnamed-chunk-24-1.png)<!-- -->
 
@@ -408,6 +436,18 @@ with the highest amount occurring on Saturday.
 
 #### Average Weekday Trip Duration
 
+``` r
+total_tripsv2 %>% 
+  mutate(weekday = wday(started_at, label=TRUE)) %>%
+  group_by(rider_type, weekday) %>%
+    summarise(average_duration = mean(duration)) %>%
+    arrange(rider_type, weekday) %>%
+ggplot(mapping = aes(x=weekday, y=average_duration, fill=rider_type)) + 
+  geom_col(position = "dodge") + 
+  ylab("average_duration(in seconds)") +
+  scale_y_continuous(labels = scales::comma) 
+```
+
 ![](Cyclistic-Case-Study-2022_files/figure-gfm/unnamed-chunk-25-1.png)<!-- -->
 
 The average ride duration during the week among casual riders was
@@ -417,6 +457,18 @@ Meanwhile, the average ride duration among annual members was steadily
 under 1,000 seconds throughout the week.
 
 #### Monthly Ride Count
+
+``` r
+total_tripsv2 %>% 
+  mutate(months = month(started_at, label=TRUE)) %>%
+  group_by(rider_type, months) %>%
+    summarise(number_of_rides = n()) %>%
+      arrange(rider_type, months) %>%
+ggplot(aes(x = months, y = number_of_rides, color = rider_type, group = rider_type)) +
+    geom_line(linewidth = 1.5) +
+    geom_point(size = 3) + 
+      scale_y_continuous(labels = scales::comma) 
+```
 
 ![](Cyclistic-Case-Study-2022_files/figure-gfm/unnamed-chunk-26-1.png)<!-- -->
 
@@ -429,6 +481,15 @@ winter seasons. The maximum amount of rides for both rider types occurs
 during the spring and summer seasons.
 
 #### Top 5 End Station Destinations
+
+``` r
+top_5_stations$end_station_name <- factor(top_5_stations$end_station_name, (levels=c("Clinton St & Washington Blvd", "University Ave & 57th St", "Wells St & Concord Ln","Clark St & Elm St", "Kingsbury St & Kinzie St", "DuSable Lake Shore Dr & North Blvd", "Michigan Ave & Oak St", "Millennium Park", "DuSable Lake Shore Dr & Monroe St","Streeter Dr & Grand Ave")))
+top_5_stations %>%
+  ggplot(aes(x=rider_type, y=number_of_rides, fill=end_station_name, label=number_of_rides)) + 
+      geom_bar(stat = "identity") + 
+      geom_text(aes(label=format(number_of_rides, big.mark = ",")), position=position_stack(vjust=0.5), color="white") +
+      scale_y_continuous(labels = scales::comma)
+```
 
 ![](Cyclistic-Case-Study-2022_files/figure-gfm/unnamed-chunk-27-1.png)<!-- -->
 
