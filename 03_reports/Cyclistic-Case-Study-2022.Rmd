@@ -2,7 +2,7 @@
 title: "Cyclistic 2022 Case Study"
 author: "Leopoldine Mirtil"
 date: "`r Sys.Date()`"
-output: html_document
+output: rmarkdown::github_document
 ---
 
 ```{r setup, include=FALSE}
@@ -248,7 +248,7 @@ write.csv(top_5_stations, "top_5_stations.csv", row.names = FALSE)
 
 #### Preferred Bikes among Riders
 
-```{r, echo=FALSE}
+```{r}
 total_tripsv2$bike_type <-factor(total_tripsv2$bike_type,(levels =c("docked_bike", "classic_bike", "electric_bike"))) 
 total_tripsv2 %>% 
   count(bike_type, rider_type, sort = TRUE) %>%
@@ -267,7 +267,7 @@ The electric bike is the most popular bike among casual riders. The preferred bi
 
 #### Total Weekday Ride Count
 
-```{r, echo=FALSE, message=FALSE}
+```{r, message=FALSE}
 options(scipen=999) #remove scientific notation from y-axis
 library(scales) # load pkg to scale y-axis
 
@@ -287,7 +287,7 @@ Annual members consistently had a larger number of rides Monday to Friday, with 
 
 #### Average Weekday Trip Duration
 
-```{r, echo=FALSE, message=FALSE}
+```{r, message=FALSE}
 total_tripsv2 %>% 
   mutate(weekday = wday(started_at, label=TRUE)) %>%
   group_by(rider_type, weekday) %>%
@@ -305,7 +305,7 @@ The average ride duration during the week among casual riders was consistently t
 
 #### Monthly Ride Count 
 
-```{r, echo=FALSE, message=FALSE}
+```{r, message=FALSE}
 total_tripsv2 %>% 
   mutate(months = month(started_at, label=TRUE)) %>%
   group_by(rider_type, months) %>%
@@ -323,7 +323,7 @@ Annual members consistently had a higher number of rides across the year when co
 
 #### Top 5 End Station Destinations
 
-```{r, message=FALSE, echo=FALSE}
+```{r, message=FALSE}
 top_5_stations$end_station_name <- factor(top_5_stations$end_station_name, (levels=c("Clinton St & Washington Blvd", "University Ave & 57th St", "Wells St & Concord Ln","Clark St & Elm St", "Kingsbury St & Kinzie St", "DuSable Lake Shore Dr & North Blvd", "Michigan Ave & Oak St", "Millennium Park", "DuSable Lake Shore Dr & Monroe St","Streeter Dr & Grand Ave")))
 top_5_stations %>%
   ggplot(aes(x=rider_type, y=number_of_rides, fill=end_station_name, label=number_of_rides)) + 
