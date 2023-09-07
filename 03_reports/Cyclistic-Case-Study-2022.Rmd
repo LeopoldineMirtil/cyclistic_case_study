@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ### Disclaimer
 
-This analysis is from the Cyclistic Bike Share Case Study: How Does a Bike-Share Navigate Speedy Success? as part of the Google Data Analytics Certificate Capstone Project. The trip data has been made publicly available by Motivate International Inc. license  [here](https://ride.divvybikes.com/data-license-agreement). The data was downloaded as part of the 2022 monthly Divvy trip data set from this [link here](https://divvy-tripdata.s3.amazonaws.com/index.html). 
+This analysis was made from the _Cyclistic Bike Share Case Study: How Does a Bike-Share Navigate Speedy Success?_ offered through the Google Data Analytics Certificate program on Coursera.com. The data has been made publicly available by the Motivate International Inc license. The data was originally downloaded from the 2022 monthly Divvy trip data set from this [link here](https://divvy-tripdata.s3.amazonaws.com/index.html). 
 
 
 ## Introduction
@@ -47,6 +47,7 @@ library(tidyverse)
 ```{r}
 setwd("C:/Users/Leopoldine/Desktop/Mine/Coding Projects & Portfolio/Cyclistic Case Study/Cyclistic2022/00_raw_data")
 
+##set the directory first to import files w/o having to include file paths each time
 m1_2022 <- read.csv("202201-divvy-tripdata.csv")
 m2_2022 <- read.csv("202202-divvy-tripdata.csv")
 m3_2022 <- read.csv("202203-divvy-tripdata.csv")
@@ -65,16 +66,19 @@ m12_2022 <- read.csv("202212-divvy-tripdata.csv")
 ### Step 2 - Combine Data Sets into Single Data Frame 
 
 ```{r}
+#combine 12 monthly files into single 2022
 total_trips <- bind_rows(m1_2022, m2_2022, m3_2022, m4_2022, m5_2022, m6_2022, m7_2022, m8_2022, m9_2022, m10_2022, m11_2022, m12_2022)
 
 str(total_trips)  #inspect new data frame
 ```
 
+
 #### Set Working Directory and Export File
 
 ```{r}
 setwd("C:/Users/Leopoldine/Desktop/Mine/Coding Projects & Portfolio/Cyclistic Case Study/Cyclistic2022/01_tidy_data")
-#export copy of new data frame just in case
+
+#export copy of new data frame just in case of sys crash/save corruption or overwrite 
 write.csv(total_trips, "total_trips.csv", row.names = FALSE)
 ```
 
@@ -88,13 +92,15 @@ total_trips$day_of_week <- format(as.Date(total_trips$date), "%A")  #full name o
 total_trips$duration <- difftime(total_trips$ended_at,total_trips$started_at)  #ride length in seconds
 ```
 
+
 ### Step 4 - Cleaning Process 
 
-#### Inspect Data Frame
+#### Inspect Modified Data Frame
 
 ```{r}
 str(total_trips) 
 ```
+
 
 #### Create New Data Frame and Export File 
 
@@ -105,38 +111,47 @@ total_tripsv2 <- total_trips
 write.csv(total_tripsv2, "total_tripsv2.csv", row.names = FALSE)
 ```
 
+
 #### Change Data Type of Column
 
 ```{r}
-#remove seconds for calculations
+# change data type to remove 'secs' unit and allow for calculations
 total_tripsv2$duration <- as.numeric(total_tripsv2$duration)
 
 # confirm data type change
 str(total_tripsv2$duration)
 ```
 
-#### Remove Negative Values from 'duration' column
+
+#### Remove Negative Values from 'duration' Column
 
 ```{r}
+#remove negative values removed to not affect analysis
 total_tripsv2 <- total_tripsv2[!(total_tripsv2$duration<0),]
 ```
+
 
 #### Remove Unneeded Columns
 
 ```{r}
-total_tripsv2 <- total_tripsv2[, -9:-12] #removing 4 columns: start_lat, start_lng, end_lat, end_lng 
+#removing 4 columns: start_lat, start_lng, end_lat, end_lng 
+total_tripsv2 <- total_tripsv2[, -9:-12] 
 ```
 
-#### Rename columns
+
+#### Rename Columns
 
 ```{r}
+#change names to more appropriate and descriptive names
 total_tripsv2 <- rename(total_tripsv2, bike_type=rideable_type, rider_type=member_casual)
 ```
+
 
 #### Export Final Modified Data Frame
 
 ```{r, results='hide'}
 setwd("C:/Users/Leopoldine/Desktop/Mine/Coding Projects & Portfolio/Cyclistic Case Study/Cyclistic2022/01_tidy_data")
+
 # export updated data frame
 write.csv(total_tripsv2, "total_tripsv2.csv", row.names = FALSE)
 ```
@@ -258,8 +273,10 @@ total_tripsv2 %>%
       ggplot(aes(fill=bike_type, y=pct, x=rider_type)) +
         geom_bar(stat = "identity") +
         ylab("Percentage of Rides") +
+        xlab("Rider Type") +
           geom_text(aes(label=paste0(sprintf("%1.2f", pct),"%")),
-            position=position_stack(vjust=0.5), color = "white") 
+            position=position_stack(vjust=0.5), color = "white") + 
+            guides(fill=guide_legend(title="Bike Type")) 
 ```
 
 The electric bike is the most popular bike among casual riders. The preferred bike type among annual members is the classic bike, with the electric bike close behind. The docked bike was only used by casual riders, but made up a small percentage of their total ride count.
@@ -278,7 +295,10 @@ total_tripsv2 %>%
     arrange(rider_type, weekday) %>%
 ggplot(mapping = aes(x=weekday, y=number_of_rides, fill=rider_type)) + 
   geom_col(position = "dodge") +
-  scale_y_continuous(labels = scales::comma) # add commas to y-axis
+  ylab("Ride Count") +
+  xlab("Weekday") +
+  scale_y_continuous(labels = scales::comma) + 
+  guides(fill=guide_legend(title="Rider Type")) 
 ```
 
 
@@ -295,15 +315,17 @@ total_tripsv2 %>%
     arrange(rider_type, weekday) %>%
 ggplot(mapping = aes(x=weekday, y=average_duration, fill=rider_type)) + 
   geom_col(position = "dodge") + 
-  ylab("average_duration(in seconds)") +
-  scale_y_continuous(labels = scales::comma) 
+  ylab("Average Trip Duration(in seconds)") +
+  xlab("Weekday") +
+  scale_y_continuous(labels = scales::comma) +
+  guides(fill=guide_legend(title="Rider Type"))
 ```
 
 
 The average ride duration during the week among casual riders was consistently twice the length of member riders during the week. The average duration among both rider types is highest on the weekends. Meanwhile, the average ride duration among annual members was steadily under 1,000 seconds throughout the week. 
 
 
-#### Monthly Ride Count 
+#### Total Monthly Ride Count 
 
 ```{r, echo=FALSE, message=FALSE}
 total_tripsv2 %>% 
@@ -314,7 +336,10 @@ total_tripsv2 %>%
 ggplot(aes(x = months, y = number_of_rides, color = rider_type, group = rider_type)) +
     geom_line(linewidth = 1.5) +
     geom_point(size = 3) + 
-      scale_y_continuous(labels = scales::comma) 
+    ylab("Ride Numbers") +
+    xlab("Months") +
+    scale_y_continuous(labels = scales::comma) +
+    guides(color=guide_legend(title="Rider Type")) 
 ```
 
 
@@ -329,7 +354,10 @@ top_5_stations %>%
   ggplot(aes(x=rider_type, y=number_of_rides, fill=end_station_name, label=number_of_rides)) + 
       geom_bar(stat = "identity") + 
       geom_text(aes(label=format(number_of_rides, big.mark = ",")), position=position_stack(vjust=0.5), color="white") +
-      scale_y_continuous(labels = scales::comma)
+      scale_y_continuous(labels = scales::comma) +
+    ylab("Ride Numbers") +
+    xlab("Rider Type") +
+    guides(fill=guide_legend(title="End Station"))
 ```
 
 
@@ -346,11 +374,11 @@ Replace docked bikes with new electric bikes to bring in more casual riders. Sin
 
 **Membership Specials**
 
-Offer new membership specials that would offer membership to casual riders at a discount. Since there is a marked increase in the number of casual riders on the weekend and approaching the summer from May to July, it would be  advantageous to offer Weekend, Spring and Summer Specials. The company can also show highlight perks of membership through digital media to influence casual riders to become members. This can include posting member testimonials, ads highlighting the benefits of the bike rides (save time or money, enjoy the sites, get in shape, etc.) 
+Offer new membership specials that would offer membership to casual riders at a discount. Since there is a marked increase in the number of casual riders on the weekend and approaching the summer from May to July, it would be  advantageous to offer Weekend, Spring and Summer Specials. The company can also show highlight perks of membership through digital media to influence casual riders to become members. This can include posting member testimonials and ads highlighting the benefits of the bike rides (save time or money, enjoy the sites, get in shape, etc.) 
 
 
 **Advertise Top 5 Destinations**
 
-Use digital media and ads near start stations to advertise the top 5 end stations used by riders. Since the top 5 station destinations of casual riders is different from those of members, the advertisements will help attract more casual riders and convert them to membership. 
+Use digital media and ads near start stations to advertise the top 5 end stations used by riders. Since the top 5 destinations of casual riders differ from those of members, the advertisements will help attract more casual riders and convert them to membership. 
 
 
