@@ -1,7 +1,6 @@
 Cyclistic 2022 Case Study
 ================
 Leopoldine Mirtil
-2023-09-07
 
 ### Disclaimer
 
