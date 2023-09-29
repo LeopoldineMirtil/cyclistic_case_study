@@ -41,12 +41,14 @@ library(tidyr)
 library(tidyverse)
 ```
 
+I chose these specific packages because they will enable data manipulation (dplyr, tidyr, tidyverse, lubridate), visualization (ggplot2), and documentation (knitr).
+
+
 #### Set Directory and Import Data Files
 
 ```{r}
 setwd("C:/Users/Leopoldine/Desktop/Mine/Coding Projects & Portfolio/Cyclistic Case Study/Cyclistic2022/00_raw_data")
 
-##set the directory first to import files w/o having to include file paths each time
 m1_2022 <- read.csv("202201-divvy-tripdata.csv")
 m2_2022 <- read.csv("202202-divvy-tripdata.csv")
 m3_2022 <- read.csv("202203-divvy-tripdata.csv")
@@ -61,15 +63,19 @@ m11_2022 <- read.csv("202211-divvy-tripdata.csv")
 m12_2022 <- read.csv("202212-divvy-tripdata.csv")
 ```
 
+I set the directory first in order to import files without having to include the full file path each time.
+
 
 ### Step 2 - Combine Data Sets into Single Data Frame 
 
 ```{r}
-#combine 12 monthly files into single 2022
+#combine all files
 total_trips <- bind_rows(m1_2022, m2_2022, m3_2022, m4_2022, m5_2022, m6_2022, m7_2022, m8_2022, m9_2022, m10_2022, m11_2022, m12_2022)
 
 str(total_trips)  #inspect new data frame
 ```
+
+I decided to combine the 12 separate, monthly files into a single, large data set covering all of 2022 for easier analysis.
 
 
 #### Set Working Directory and Export File
@@ -77,9 +83,11 @@ str(total_trips)  #inspect new data frame
 ```{r}
 setwd("C:/Users/Leopoldine/Desktop/Mine/Coding Projects & Portfolio/Cyclistic Case Study/Cyclistic2022/01_tidy_data")
 
-#export copy of new data frame just in case of sys crash/save corruption or overwrite 
+#export file
 write.csv(total_trips, "total_trips.csv", row.names = FALSE)
 ```
+
+Exported a copy of the new data frame in case of system crash (again), save corruption (again) or if overwritten when modifying (again).
 
 
 ### Step 3 - Add New Columns
@@ -91,6 +99,13 @@ total_trips$day_of_week <- format(as.Date(total_trips$date), "%A")  #full name o
 total_trips$duration <- difftime(total_trips$ended_at,total_trips$started_at)  #ride length in seconds
 ```
 
+I added these new columns for the following reasons:
+
+  * *date:* strip only the date from 'started_at' to determine when riders initially rented the bikes and for use in further modifications 
+  * *month:* identify patterns and trends across the months
+  * *day_of_week:* identify any patterns and trends across the weekdays
+  * *duration:* find out how long riders rented the bikes
+
 
 ### Step 4 - Cleaning Process 
 
@@ -99,6 +114,8 @@ total_trips$duration <- difftime(total_trips$ended_at,total_trips$started_at)  #
 ```{r}
 str(total_trips) 
 ```
+
+I see that the values in the 'duration' column each have the unit 'secs' or seconds. I will have to remove this unit in order to perform calculations.
 
 
 #### Create New Data Frame and Export File 
@@ -110,40 +127,48 @@ total_tripsv2 <- total_trips
 write.csv(total_tripsv2, "total_tripsv2.csv", row.names = FALSE)
 ```
 
+I exported a copy of the data frame with the new columns before modifying the 'duration' column.
+
 
 #### Change Data Type of Column
 
 ```{r}
-# change data type to remove 'secs' unit and allow for calculations
+# change data type
 total_tripsv2$duration <- as.numeric(total_tripsv2$duration)
 
 # confirm data type change
 str(total_tripsv2$duration)
 ```
 
+I changed the data type of the 'duration' column to numeric to remove the unit 'secs' from the column values and perform calculations.
+
 
 #### Remove Negative Values from 'duration' Column
 
 ```{r}
-#remove negative values removed to not affect analysis
 total_tripsv2 <- total_tripsv2[!(total_tripsv2$duration<0),]
 ```
+
+After viewing the data in a separate tab, I saw negative values in the column. I decided to remove these values in order to not affect the analysis.
 
 
 #### Remove Unneeded Columns
 
 ```{r}
-#removing 4 columns: start_lat, start_lng, end_lat, end_lng 
+#remove 4 columns
 total_tripsv2 <- total_tripsv2[, -9:-12] 
 ```
+
+I removed 4 columns (start_lat, start_lng, end_lat, end_lng)  to cut down the size of the data set. These latitude and longitude columns were unnecessary as the start station and end station names would be more useful in identifying trends among the riders.
 
 
 #### Rename Columns
 
 ```{r}
-#change names to more appropriate and descriptive names
 total_tripsv2 <- rename(total_tripsv2, bike_type=rideable_type, rider_type=member_casual)
 ```
+
+I decided to change the names of these columns to ones that are more descriptive and appropriate.
 
 
 #### Export Final Modified Data Frame
@@ -151,7 +176,7 @@ total_tripsv2 <- rename(total_tripsv2, bike_type=rideable_type, rider_type=membe
 ```{r, results='hide'}
 setwd("C:/Users/Leopoldine/Desktop/Mine/Coding Projects & Portfolio/Cyclistic Case Study/Cyclistic2022/01_tidy_data")
 
-# export updated data frame
+#final export
 write.csv(total_tripsv2, "total_tripsv2.csv", row.names = FALSE)
 ```
 

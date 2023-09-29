@@ -351,7 +351,6 @@ display: none;
 
 <h1 class="title toc-ignore">Cyclistic 2022 Case Study</h1>
 <h4 class="author">Leopoldine Mirtil</h4>
-<h4 class="date">2023-09-07</h4>
 
 </div>
 
@@ -403,12 +402,14 @@ library(knitr)
 library(lubridate)
 library(tidyr)
 library(tidyverse)</code></pre>
+<p>I chose these specific packages because they will enable data
+manipulation (dplyr, tidyr, tidyverse, lubridate), visualization
+(ggplot2), and documentation (knitr).</p>
 </div>
 <div id="set-directory-and-import-data-files" class="section level4">
 <h4>Set Directory and Import Data Files</h4>
 <pre class="r"><code>setwd(&quot;C:/Users/Leopoldine/Desktop/Mine/Coding Projects &amp; Portfolio/Cyclistic Case Study/Cyclistic2022/00_raw_data&quot;)
 
-##set the directory first to import files w/o having to include file paths each time
 m1_2022 &lt;- read.csv(&quot;202201-divvy-tripdata.csv&quot;)
 m2_2022 &lt;- read.csv(&quot;202202-divvy-tripdata.csv&quot;)
 m3_2022 &lt;- read.csv(&quot;202203-divvy-tripdata.csv&quot;)
@@ -421,11 +422,13 @@ m9_2022 &lt;- read.csv(&quot;202209-divvy-publictripdata.csv&quot;)
 m10_2022 &lt;- read.csv(&quot;202210-divvy-tripdata.csv&quot;)
 m11_2022 &lt;- read.csv(&quot;202211-divvy-tripdata.csv&quot;)
 m12_2022 &lt;- read.csv(&quot;202212-divvy-tripdata.csv&quot;)</code></pre>
+<p>I set the directory first in order to import files without having to
+include the full file path each time.</p>
 </div>
 </div>
 <div id="step-2---combine-data-sets-into-single-data-frame" class="section level3">
 <h3>Step 2 - Combine Data Sets into Single Data Frame</h3>
-<pre class="r"><code>#combine 12 monthly files into single 2022
+<pre class="r"><code>#combine all files
 total_trips &lt;- bind_rows(m1_2022, m2_2022, m3_2022, m4_2022, m5_2022, m6_2022, m7_2022, m8_2022, m9_2022, m10_2022, m11_2022, m12_2022)
 
 str(total_trips)  #inspect new data frame</code></pre>
@@ -443,12 +446,17 @@ str(total_trips)  #inspect new data frame</code></pre>
 ##  $ end_lat           : num  42 42 41.9 42 41.9 ...
 ##  $ end_lng           : num  -87.7 -87.7 -87.7 -87.7 -87.6 ...
 ##  $ member_casual     : chr  &quot;casual&quot; &quot;casual&quot; &quot;member&quot; &quot;casual&quot; ...</code></pre>
+<p>I decided to combine the 12 separate, monthly files into a single,
+large data set covering all of 2022 for easier analysis.</p>
 <div id="set-working-directory-and-export-file" class="section level4">
 <h4>Set Working Directory and Export File</h4>
 <pre class="r"><code>setwd(&quot;C:/Users/Leopoldine/Desktop/Mine/Coding Projects &amp; Portfolio/Cyclistic Case Study/Cyclistic2022/01_tidy_data&quot;)
 
-#export copy of new data frame just in case of sys crash/save corruption or overwrite 
+#export file
 write.csv(total_trips, &quot;total_trips.csv&quot;, row.names = FALSE)</code></pre>
+<p>Exported a copy of the new data frame in case of system crash
+(again), save corruption (again) or if overwritten when modifying
+(again).</p>
 </div>
 </div>
 <div id="step-3---add-new-columns" class="section level3">
@@ -457,6 +465,16 @@ write.csv(total_trips, &quot;total_trips.csv&quot;, row.names = FALSE)</code></p
 total_trips$month &lt;- format(as.Date(total_trips$date), &quot;%m&quot;)  #month of start date
 total_trips$day_of_week &lt;- format(as.Date(total_trips$date), &quot;%A&quot;)  #full name of the day of week of start date(Sunday, Saturday)
 total_trips$duration &lt;- difftime(total_trips$ended_at,total_trips$started_at)  #ride length in seconds</code></pre>
+<p>I added these new columns for the following reasons:</p>
+<ul>
+<li><em>date:</em> strip only the date from ‘started_at’ to determine
+when riders initially rented the bikes and for use in further
+modifications</li>
+<li><em>month:</em> identify patterns and trends across the months</li>
+<li><em>day_of_week:</em> identify any patterns and trends across the
+weekdays</li>
+<li><em>duration:</em> find out how long riders rented the bikes</li>
+</ul>
 </div>
 <div id="step-4---cleaning-process" class="section level3">
 <h3>Step 4 - Cleaning Process</h3>
@@ -482,6 +500,9 @@ total_trips$duration &lt;- difftime(total_trips$ended_at,total_trips$started_at)
 ##  $ day_of_week       : chr  &quot;Thursday&quot; &quot;Monday&quot; &quot;Tuesday&quot; &quot;Tuesday&quot; ...
 ##  $ duration          : &#39;difftime&#39; num  177 261 261 896 ...
 ##   ..- attr(*, &quot;units&quot;)= chr &quot;secs&quot;</code></pre>
+<p>I see that the values in the ‘duration’ column each have the unit
+‘secs’ or seconds. I will have to remove this unit in order to perform
+calculations.</p>
 </div>
 <div id="create-new-data-frame-and-export-file" class="section level4">
 <h4>Create New Data Frame and Export File</h4>
@@ -489,36 +510,47 @@ total_trips$duration &lt;- difftime(total_trips$ended_at,total_trips$started_at)
 
 total_tripsv2 &lt;- total_trips
 write.csv(total_tripsv2, &quot;total_tripsv2.csv&quot;, row.names = FALSE)</code></pre>
+<p>I exported a copy of the data frame with the new columns before
+modifying the ‘duration’ column.</p>
 </div>
 <div id="change-data-type-of-column" class="section level4">
 <h4>Change Data Type of Column</h4>
-<pre class="r"><code># change data type to remove &#39;secs&#39; unit and allow for calculations
+<pre class="r"><code># change data type
 total_tripsv2$duration &lt;- as.numeric(total_tripsv2$duration)
 
 # confirm data type change
 str(total_tripsv2$duration)</code></pre>
 <pre><code>##  num [1:5667717] 177 261 261 896 362 ...</code></pre>
+<p>I changed the data type of the ‘duration’ column to numeric to remove
+the unit ‘secs’ from the column values and perform calculations.</p>
 </div>
 <div id="remove-negative-values-from-duration-column" class="section level4">
 <h4>Remove Negative Values from ‘duration’ Column</h4>
-<pre class="r"><code>#remove negative values removed to not affect analysis
-total_tripsv2 &lt;- total_tripsv2[!(total_tripsv2$duration&lt;0),]</code></pre>
+<pre class="r"><code>total_tripsv2 &lt;- total_tripsv2[!(total_tripsv2$duration&lt;0),]</code></pre>
+<p>After viewing the data in a separate tab, I saw negative values in
+the column. I decided to remove these values in order to not affect the
+analysis.</p>
 </div>
 <div id="remove-unneeded-columns" class="section level4">
 <h4>Remove Unneeded Columns</h4>
-<pre class="r"><code>#removing 4 columns: start_lat, start_lng, end_lat, end_lng 
+<pre class="r"><code>#remove 4 columns
 total_tripsv2 &lt;- total_tripsv2[, -9:-12] </code></pre>
+<p>I removed 4 columns (start_lat, start_lng, end_lat, end_lng) to cut
+down the size of the data set. These latitude and longitude columns were
+unnecessary as the start station and end station names would be more
+useful in identifying trends among the riders.</p>
 </div>
 <div id="rename-columns" class="section level4">
 <h4>Rename Columns</h4>
-<pre class="r"><code>#change names to more appropriate and descriptive names
-total_tripsv2 &lt;- rename(total_tripsv2, bike_type=rideable_type, rider_type=member_casual)</code></pre>
+<pre class="r"><code>total_tripsv2 &lt;- rename(total_tripsv2, bike_type=rideable_type, rider_type=member_casual)</code></pre>
+<p>I decided to change the names of these columns to ones that are more
+descriptive and appropriate.</p>
 </div>
 <div id="export-final-modified-data-frame" class="section level4">
 <h4>Export Final Modified Data Frame</h4>
 <pre class="r"><code>setwd(&quot;C:/Users/Leopoldine/Desktop/Mine/Coding Projects &amp; Portfolio/Cyclistic Case Study/Cyclistic2022/01_tidy_data&quot;)
 
-# export updated data frame
+#final export
 write.csv(total_tripsv2, &quot;total_tripsv2.csv&quot;, row.names = FALSE)</code></pre>
 </div>
 </div>
